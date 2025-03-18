@@ -10,6 +10,11 @@
 #include "graphics/descriptors.hpp"
 #include "scene/scene.hpp"
 
+// IMGUI
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_vulkan.h"
+
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
@@ -24,12 +29,7 @@ namespace PXTEngine {
     class Application {
     public:
         Application();
-        virtual ~Application() {
-            for (auto& [_, system] : m_systems) {
-                system->onShutdown();
-                delete system;
-            }
-        };
+        ~Application();
 
         static Application& get() { return *Instance; }
 

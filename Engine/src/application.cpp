@@ -30,6 +30,17 @@ namespace PXTEngine {
                 .build();
     }
 
+    Application::~Application() {
+            for (auto& [_, system] : m_systems) {
+                system->onShutdown();
+                delete system;
+            }
+
+            ImGui_ImplVulkan_Shutdown();
+            ImGui_ImplGlfw_Shutdown();
+            ImGui::DestroyContext();
+        };
+
     void Application::run() {
         std::vector<Unique<Buffer>> uboBuffers(SwapChain::MAX_FRAMES_IN_FLIGHT);
 
