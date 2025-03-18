@@ -43,7 +43,7 @@ namespace PXTEngine {
         descriptorSetLayoutInfo.pBindings = setLayoutBindings.data();
         
         if (vkCreateDescriptorSetLayout(
-                m_device.device(),
+                m_device.getDevice(),
                 &descriptorSetLayoutInfo,
                 nullptr,
                 &m_descriptorSetLayout) != VK_SUCCESS) {
@@ -52,7 +52,7 @@ namespace PXTEngine {
     }
     
     DescriptorSetLayout::~DescriptorSetLayout() {
-        vkDestroyDescriptorSetLayout(m_device.device(), m_descriptorSetLayout, nullptr);
+        vkDestroyDescriptorSetLayout(m_device.getDevice(), m_descriptorSetLayout, nullptr);
     }
     
     // *************** Descriptor Pool Builder *********************
@@ -87,20 +87,19 @@ namespace PXTEngine {
             : m_device{device} {
         VkDescriptorPoolCreateInfo descriptorPoolInfo{};
         descriptorPoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-        descriptorPoolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
         descriptorPoolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
         descriptorPoolInfo.pPoolSizes = poolSizes.data();
         descriptorPoolInfo.maxSets = maxSets;
         descriptorPoolInfo.flags = poolFlags;
         
-        if (vkCreateDescriptorPool(m_device.device(), &descriptorPoolInfo, nullptr, &m_descriptorPool) !=
+        if (vkCreateDescriptorPool(m_device.getDevice(), &descriptorPoolInfo, nullptr, &m_descriptorPool) !=
             VK_SUCCESS) { 
             throw std::runtime_error("failed to create descriptor pool!");
         }
     }
     
     DescriptorPool::~DescriptorPool() {
-        vkDestroyDescriptorPool(m_device.device(), m_descriptorPool, nullptr);
+        vkDestroyDescriptorPool(m_device.getDevice(), m_descriptorPool, nullptr);
     }
     
     bool DescriptorPool::allocateDescriptorSet(
@@ -113,7 +112,7 @@ namespace PXTEngine {
         
         //TODO: Might want to create a "DescriptorPoolManager" class that handles this case, and builds
         // a new pool whenever an old pool fills up. But this is beyond our current scope
-        if (vkAllocateDescriptorSets(m_device.device(), &allocInfo, &descriptor) != VK_SUCCESS) {
+        if (vkAllocateDescriptorSets(m_device.getDevice(), &allocInfo, &descriptor) != VK_SUCCESS) {
             return false;
         }
         return true; 
@@ -121,14 +120,14 @@ namespace PXTEngine {
     
     void DescriptorPool::freeDescriptors(std::vector<VkDescriptorSet>& descriptors) const {
         vkFreeDescriptorSets(
-            m_device.device(),
+            m_device.getDevice(),
             m_descriptorPool,
             static_cast<uint32_t>(descriptors.size()),
             descriptors.data());
     }
     
     void DescriptorPool::resetPool() {
-        vkResetDescriptorPool(m_device.device(), m_descriptorPool, 0);
+        vkResetDescriptorPool(m_device.getDevice(), m_descriptorPool, 0);
     }
     
     // *************** Descriptor Writer *********************
@@ -191,7 +190,7 @@ namespace PXTEngine {
         for (auto& write : m_writes) {
             write.dstSet = set;
         }
-        vkUpdateDescriptorSets(m_pool.m_device.device(), m_writes.size(), m_writes.data(), 0, nullptr);
+        vkUpdateDescriptorSets(m_pool.m_device.getDevice(), m_writes.size(), m_writes.data(), 0, nullptr);
     }
  
 }
