@@ -2,9 +2,7 @@
 #extension GL_GOOGLE_include_directive : require
 
 #include "ubo/global_ubo.glsl"
-
-const float PI = 3.14159265359;
-
+#include "common/math.glsl"
 
 layout(location = 0) in vec2 fragOffset;
 
