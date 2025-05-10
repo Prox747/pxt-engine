@@ -139,7 +139,7 @@ public:
         //entity.get<TransformComponent>().translation = glm::vec3{0.0f, 0.0f, 0.0f};
 
         // Three rotating lights (white, green, blue)
-        entity = createPointLight(0.5f, 0.025f, glm::vec3{1.f, 1.f, 1.f});
+        entity = createPointLight(1.0f, 0.025f, glm::vec3{1.f, 1.f, 1.f});
         entity.get<TransformComponent>().translation = glm::vec3{10.0f / (float) sqrt(3), 0.5f, 0.2f};
         entity.addAndGet<ScriptComponent>().bind<RotatingLightController>();
 #if 0
