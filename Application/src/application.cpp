@@ -38,8 +38,6 @@ public:
         auto bunny = rm.get<Mesh>(MODELS_PATH + "bunny/bunny.obj");
         auto bunnyMaterial = Material::Builder()
             .setAlbedoMap(rm.get<Image>(MODELS_PATH + "bunny/terracotta.jpg", &albedoInfo))
-            .setNormalMap(rm.get<Image>(NORMAL_PIXEL_LINEAR))
-			.setAmbientOcclusionMap(rm.get<Image>(WHITE_PIXEL_LINEAR))
             .build();
 
         auto ground = rm.get<Mesh>(MODELS_PATH + "quad.obj");
@@ -58,6 +56,26 @@ public:
         auto stylizedStoneNormal = rm.get<Image>(TEXTURES_PATH + "stylized_stone/normal.png");
 		auto stylizedStoneRoughness = rm.get<Image>(TEXTURES_PATH + "stylized_stone/roughness.png");
         auto stylizedStoneAO = rm.get<Image>(TEXTURES_PATH + "stylized_stone/ambient_occlusion.png");
+		auto hammeredCopperBase = rm.get<Image>(TEXTURES_PATH + "hammered_copper/base.png", &albedoInfo);
+		auto hammeredCopperNormal = rm.get<Image>(TEXTURES_PATH + "hammered_copper/normal.png");
+		auto hammeredCopperRoughness = rm.get<Image>(TEXTURES_PATH + "hammered_copper/roughness.png");
+        auto hammeredCopperMetallic = rm.get<Image>(TEXTURES_PATH + "hammered_copper/metallic.png");
+		auto hammeredCopperAO = rm.get<Image>(TEXTURES_PATH + "hammered_copper/ao.png");
+
+		auto hammeredCopperMaterial = Material::Builder()
+			.setAlbedoMap(hammeredCopperBase)
+			.setNormalMap(hammeredCopperNormal)
+			.setRoughnessMap(hammeredCopperRoughness)
+			.setMetallicMap(hammeredCopperMetallic)
+			.setAmbientOcclusionMap(hammeredCopperAO)
+			.build();
+
+        auto wallStoneMaterial = Material::Builder()
+            .setAlbedoMap(wallStoneBase)
+            .setNormalMap(wallStoneNormal)
+            .setRoughnessMap(wallStoneRoughness)
+            .setAmbientOcclusionMap(wallStoneAO)
+            .build();
 
 		auto stylizedStoneMaterial = Material::Builder()
 			.setAlbedoMap(stylizedStoneBase)
@@ -70,8 +88,8 @@ public:
             .add<TransformComponent>(glm::vec3{0.f, 1.f, 0.f}, glm::vec3{15.f, 15.f, 15.f}, glm::vec3{0.0f, 0.0f, 0.0f})
             .add<MeshComponent>(ground)
 			.add<MaterialComponent>(MaterialComponent::Builder()
-				.setMaterial(stylizedStoneMaterial)
-				.setTilingFactor(50.0f)
+				.setMaterial(wallStoneMaterial)
+				.setTilingFactor(100.0f)
 				.build());
 #if 0
         entity = getScene().createEntity("Roof")
@@ -110,16 +128,18 @@ public:
 
             entity = getScene().createEntity("vase" + std::to_string(i))
                 .add<TransformComponent>(pos, scale, rotation)
-                .add<MeshComponent>(vase);
-
-			entity.addAndGet<MaterialComponent>().tint = glm::vec3(0.1f, 0.3f, 0.9f);
+                .add<MeshComponent>(vase)
+				.add<MaterialComponent>(MaterialComponent::Builder()
+	                .setMaterial(hammeredCopperMaterial)
+	                .setTilingFactor(3.0f)
+	                .build());
 		}
 
         //entity = createPointLight(0.25f, 0.02f, glm::vec3{1.f, 1.f, 1.f});
         //entity.get<TransformComponent>().translation = glm::vec3{0.0f, 0.0f, 0.0f};
 
         // Three rotating lights (white, green, blue)
-        entity = createPointLight(0.05f, 0.025f, glm::vec3{1.f, 1.f, 1.f});
+        entity = createPointLight(0.5f, 0.025f, glm::vec3{1.f, 1.f, 1.f});
         entity.get<TransformComponent>().translation = glm::vec3{10.0f / (float) sqrt(3), 0.5f, 0.2f};
         entity.addAndGet<ScriptComponent>().bind<RotatingLightController>();
 #if 0
